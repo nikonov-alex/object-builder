@@ -28,9 +28,9 @@ const update = <O extends { [k: string]: any }, K extends string, V>(
 
 const optional = <O extends { [k: string]: any }, K extends string, V>(
     key: K,
-    value: Value<O, Types.Maybe<V>>
-) =>
-    ( obj: O ): O | O & Record<K, V> =>
+    value: Value<O, Types.Maybe<V>>,
+    obj: O
+): O | O & Record<K, V> =>
         ( val =>
             !val
                 ? obj
@@ -39,9 +39,9 @@ const optional = <O extends { [k: string]: any }, K extends string, V>(
 
 const required = <O extends { [k: string]: any }, K extends string, V>(
     key: K,
-    value: Value<O, Types.Either<V, Error>>
-) =>
-    ( obj: O ): Error | O & Record<K, V> =>
+    value: Value<O, Types.Either<V, Error>>,
+    obj: O
+): Error | O & Record<K, V> =>
         ( val =>
             val instanceof Error
                 ? val
