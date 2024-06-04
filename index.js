@@ -10,6 +10,5 @@ const required = (action, value) => (obj) => (val => val instanceof Error
     ? val
     : action(obj))(value(obj));
 const field = (key, action, val, validator) => (obj) => (value => validator(action(key, value), value)(obj))(value(val(obj)));
-field("test", update, value(10), required);
-export {};
+export { field, required, optional, update, append, value, calc };
 //# sourceMappingURL=index.js.map

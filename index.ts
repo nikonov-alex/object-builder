@@ -101,8 +101,4 @@ const field = <O extends { [k: string]: any }, K extends string, V extends any, 
             )( obj )
         )( value( val( obj ) ) );
 
-
-type Predicate<T> = { ( a: any ): a is T };
-
-
-field( "test", update, value( 10 ), required );
+export { field, required, optional, update, append, value, calc };
