@@ -23,9 +23,7 @@ type ActionConstructor<O extends { [k: string]: any }, K extends string, V> = { 
         value: Value<O, V>
     ): Action<O, K, V> };
 
-type ActionResult<O extends { [k: string]: any }, K extends string, V> = O & Record<K, V>;
-
-type Action<O extends { [k: string]: any }, K extends string, V> = { ( obj: O ): ActionResult<O, K, V> };
+type Action<O extends { [k: string]: any }, K extends string, V> = { ( obj: O ): O & Record<K, V> };
 
 const update = <O extends { [k: string]: any }, K extends string, V>(
     key: K,
@@ -54,18 +52,16 @@ type ValidatorConstructor<O extends { [k: string]: any }, K extends string, V, T
     value: EitherValue<O, Types.Either<V, T>>
 ): Validator<O, K, V, R> };
 
-type ValidatorResult<O extends { [k: string]: any }, K extends string, V, R> = R | ActionResult<O, K, V>;
-
 type Validator<O extends { [k: string]: any }, K extends string, V, R> = { (
         obj: O
-    ): ValidatorResult<O, K, V, R>
+    ): R | O & Record<K, V>
 };
 
 const optional = <O extends { [k: string]: any }, K extends string, V>(
     action: Action<O, K, V>,
     value: EitherValue<O, Types.Maybe<V>>
 ): Validator<O, K, V, O> =>
-    ( obj: O ): ValidatorResult<O, K, V, O> =>
+    ( obj: O ): O | O & Record<K, V> =>
         ( val =>
             !val
                 ? obj
@@ -76,7 +72,7 @@ const required = <O extends { [k: string]: any }, K extends string, V>(
     action: Action<O, K, V>,
     value: EitherValue<O, Types.Either<V, Error>>
 ): Validator<O, K, V, Error> =>
-    ( obj: O ): ValidatorResult<O, K, V, Error> =>
+    ( obj: O ): Error | O & Record<K, V> =>
         ( val =>
             val instanceof Error
                 ? val
@@ -97,7 +93,7 @@ const field = <O extends { [k: string]: any }, K extends string, V, T, R>(
     validator: ValidatorConstructor<O, K, V, T, R>,
     val: EitherValue<O, Types.Either<V, T>>
 ): Validator<O, K, V, R> =>
-    ( obj: O ): ValidatorResult<O, K, V, R> =>
+    ( obj: O ): R | O & Record<K, V> =>
         ( value =>
             validator(
                 action( key, value as Value<O, V> ),
