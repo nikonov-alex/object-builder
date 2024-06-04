@@ -90,8 +90,8 @@ const required = <O extends { [k: string]: any }, K extends string, V extends an
 const field = <O extends { [k: string]: any }, K extends string, V extends any, T extends any, R extends any>(
     key: K,
     action: ActionConstructor<O, K, V>,
-    val: Value<O, V | T>,
-    validator: ValidatorConstructor<O, K, V, T, R>
+    validator: ValidatorConstructor<O, K, V, T, R>,
+    val: Value<O, V | T>
 ): Validator<O, K, V, R> =>
     ( obj: O ): ValidatorResult<O, K, V, R> =>
         ( value =>
