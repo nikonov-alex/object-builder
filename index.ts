@@ -2,6 +2,8 @@ import { Types } from "@nikonov-alex/functional-library";
 
 type Value<O extends { [k: string]: any }, V> = { ( obj: O ): V };
 
+type EitherValue<O extends { [k: string]: any }, V extends Types.Either<any, any>> = Value<O, V>;
+
 const calc = <O extends { [k: string]: any }, V, F extends { ( o: O ): V }>(
     func: F
 ): Value<O, V> =>
@@ -11,7 +13,6 @@ const value = <O extends { [k: string]: any }, V>(
     value: V
 ): Value<O, V> =>
     ( obj: O ) => value;
-
 
 
 
@@ -48,8 +49,6 @@ const append = <O extends { [k: string]: any }, K extends string, V>(
 
 
 
-type EitherValue<O extends { [k: string]: any }, V extends Types.Either<any, any>> = Value<O, V>;
-
 type ValidatorConstructor<O extends { [k: string]: any }, K extends string, V, T, R> = { (
     action: Action<O, K, V>,
     value: EitherValue<O, Types.Either<V, T>>
@@ -85,7 +84,11 @@ const required = <O extends { [k: string]: any }, K extends string, V>(
         )( value( obj ) );
 
 
-
+const orerror = <O extends { [k: string]: any }, V>(
+    value: Value<O, Types.Maybe<V>>,
+    error: Error
+): EitherValue<O, Types.Either<V, Error>> =>
+    ( obj: O ) => value( obj ) || error;
 
 
 const field = <O extends { [k: string]: any }, K extends string, V, T, R>(
@@ -102,4 +105,4 @@ const field = <O extends { [k: string]: any }, K extends string, V, T, R>(
             )( obj )
         )( value( val( obj ) ) );
 
-export { field, required, optional, update, append, value, calc, EitherValue };
+export { field, required, optional, update, append, value, calc, orerror };

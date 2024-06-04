@@ -1,6 +1,6 @@
 {
   "name": "@nikonov-alex/object-builder",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "Object builder",
   "main": "./index.js",
   "types": "./index.ts",

@@ -9,6 +9,7 @@ const optional = (action, value) => (obj) => (val => !val
 const required = (action, value) => (obj) => (val => val instanceof Error
     ? val
     : action(obj))(value(obj));
+const orerror = (value, error) => (obj) => value(obj) || error;
 const field = (key, action, validator, val) => (obj) => (value => validator(action(key, value), value)(obj))(value(val(obj)));
-export { field, required, optional, update, append, value, calc };
+export { field, required, optional, update, append, value, calc, orerror };
 //# sourceMappingURL=index.js.map
