@@ -37,19 +37,19 @@ const optional = <O extends { [k: string]: any }, K extends string, V>(
                 : update( obj, key, val )
         )( value( obj ) );
 
-const required = <O extends { [k: string]: any }, K extends string, V, B>(
+const required = <O extends { [k: string]: any }, K extends string, V, B extends { ( x: O ): any } | undefined>(
     obj: O,
     key: K,
     value: Value<O, Types.Either<V, Error>>,
-    callback?: { ( obj: O & Record<K, V> ): B }
-): Error | O & Record<K, V> | B =>
+    callback: B
+): ( Error | B extends { ( x: O ): infer C }
+        ? C
+        : O & Record<K, V> ) =>
         ( val =>
             val instanceof Error
                 ? val
                 : ( result =>
-                        callback
-                                ? callback( result )
-                                : result
+                    callback ? callback( result ) : result
                 )
                 ( update( obj, key, val ) )
         )( value( obj ) );
