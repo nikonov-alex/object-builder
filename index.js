@@ -1,12 +1,10 @@
-const calc = (func) => (obj) => func(obj);
-const value = (value) => (obj) => value;
-const update = (obj, key, value, callback) => callback((val => undefined === obj[key] || obj[key] !== val
-    ? Object.assign(Object.assign({}, obj), { [key]: val }) : obj)(value(obj)));
-const optional = (obj, key, val, callback) => (v => !v
+const update = (obj, key, value, callback) => callback(undefined === obj[key] || obj[key] !== value
+    ? Object.assign(Object.assign({}, obj), { [key]: value }) : obj);
+const optional = (obj, key, value, callback) => !value
     ? callback(obj)
-    : update(obj, key, value(v), callback))(val(obj));
-const required = (obj, key, val, callback) => (v => v instanceof Error
-    ? v
-    : update(obj, key, value(v), callback))(val(obj));
-export { update, required, optional, value, calc };
+    : update(obj, key, value, callback);
+const required = (obj, key, value, callback) => value instanceof Error
+    ? value
+    : update(obj, key, value, callback);
+export { update, required, optional };
 //# sourceMappingURL=index.js.map
