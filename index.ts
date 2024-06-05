@@ -32,11 +32,9 @@ const optional = <O extends { [k: string]: any }, K extends string, V, B>(
     value: Value<O, Types.Maybe<V>>,
     callback: { ( obj: O | O & Record<K, V> ): B }
 ) =>
-        ( val =>
-            !val
-                ? obj
-                : callback( update( obj, key, val ) )
-        )( value( obj ) );
+        ( val => callback(
+            !val ? obj : update( obj, key, val )
+        ))( value( obj ) );
 
 const required = <O extends { [k: string]: any }, K extends string, V, B>(
     obj: O,
