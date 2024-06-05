@@ -20,37 +20,37 @@ const value = <O extends { [k: string]: any }, V>(
 const update = <O extends { [k: string]: any }, K extends string, V, B>(
     obj: O,
     key: K,
-    value: V,
+    value: Value<O, V>,
     callback: { ( obj: O & Record<K, V> ): B }
 ): B =>
     callback(
-    undefined === obj[key] || obj[key] !== value
-                ? { ... obj, [key]: value }
-                : obj
+        ( val => undefined === obj[key] || obj[key] !== val
+                ? { ... obj, [key]: val }
+                : obj )( value( obj ) )
     );
 
 const optional = <O extends { [k: string]: any }, K extends string, V, B>(
     obj: O,
     key: K,
-    value: Value<O, Types.Maybe<V>>,
+    val: Value<O, Types.Maybe<V>>,
     callback: { ( obj: O | O & Record<K, V> ): B }
 ) =>
-        ( val => !val
+        ( v => !v
                 ? callback( obj )
-                : update( obj, key, val, callback )
-        )( value( obj ) );
+                : update( obj, key, value( v ), callback )
+        )( val( obj ) );
 
 const required = <O extends { [k: string]: any }, K extends string, V, B>(
     obj: O,
     key: K,
-    value: Value<O, Types.Either<V, Error>>,
+    val: Value<O, Types.Either<V, Error>>,
     callback: { ( obj: O & Record<K, V> ): B }
 ) =>
-        ( val =>
-            val instanceof Error
-                ? val
-                : update( obj, key, val, callback )
-        )( value( obj ) );
+        ( v =>
+            v instanceof Error
+                ? v
+                : update( obj, key, value( v ), callback )
+        )( val( obj ) );
 
 
 export { update, required, optional, value, calc };
