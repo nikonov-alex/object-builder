@@ -5,8 +5,10 @@ const update = (obj, key, value) => undefined === obj[key] || obj[key] !== value
 const optional = (obj, key, value) => (val => !val
     ? obj
     : update(obj, key, val))(value(obj));
-const required = (obj, key, value) => (val => val instanceof Error
+const required = (obj, key, value, callback) => (val => val instanceof Error
     ? val
-    : update(obj, key, val))(value(obj));
+    : (result => callback
+        ? callback(result)
+        : result)(update(obj, key, val)))(value(obj));
 export { required, optional, value, calc };
 //# sourceMappingURL=index.js.map
