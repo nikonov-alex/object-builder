@@ -17,14 +17,17 @@ const value = <O extends { [k: string]: any }, V>(
 
 
 
-const update = <O extends { [k: string]: any }, K extends string, V>(
+const update = <O extends { [k: string]: any }, K extends string, V, B>(
     obj: O,
     key: K,
-    value: V
-): O & Record<K, V> =>
+    value: V,
+    callback: { ( obj: O & Record<K, V> ): B }
+): B =>
+    callback(
     undefined === obj[key] || obj[key] !== value
-        ? { ... obj, [key]: value }
-        : obj
+                ? { ... obj, [key]: value }
+                : obj
+    );
 
 const optional = <O extends { [k: string]: any }, K extends string, V, B>(
     obj: O,
@@ -32,9 +35,10 @@ const optional = <O extends { [k: string]: any }, K extends string, V, B>(
     value: Value<O, Types.Maybe<V>>,
     callback: { ( obj: O | O & Record<K, V> ): B }
 ) =>
-        ( val => callback(
-            !val ? obj : update( obj, key, val )
-        ))( value( obj ) );
+        ( val => !val
+                ? callback( obj )
+                : update( obj, key, val, callback )
+        )( value( obj ) );
 
 const required = <O extends { [k: string]: any }, K extends string, V, B>(
     obj: O,
@@ -45,8 +49,8 @@ const required = <O extends { [k: string]: any }, K extends string, V, B>(
         ( val =>
             val instanceof Error
                 ? val
-                : callback( update( obj, key, val ) )
+                : update( obj, key, val, callback )
         )( value( obj ) );
 
 
-export { required, optional, value, calc };
+export { update, required, optional, value, calc };
